@@ -3,10 +3,11 @@ const cheerio = require("cheerio");
 const request = require("request");
 const url = "http://movie.naver.com/movie/sdb/rank/rmovie.nhn";
 
+// json으로 뽑기
 request({ url: url, encoding: "binary" }, (err, response, body) => {
   const Iconv = require("iconv").Iconv;
   const iconv = new Iconv("euc-kr", "UTF-8");
-  const html = iconv.convert(new Buffer(body, "binary")).toString();
+  const html = iconv.convert(Buffer.from(body, "binary")).toString();
   let $ = cheerio.load(html);
   let json = [];
   let arr = [];
@@ -16,7 +17,7 @@ request({ url: url, encoding: "binary" }, (err, response, body) => {
       [`${i - 1}위`]: arr[i - 2]
     });
   }
-  fs.writeFile("./html/naverMovie.json", JSON.stringify(json, null, "\t"));
+  fs.writeFileSync("./html/naverMovie.json", JSON.stringify(json, null, "\t"));
 });
 
 // 웹 크롤링을 위한 모듈
